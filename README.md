@@ -5,7 +5,7 @@ hand-illustrated leaflets that unfold in 3D when tapped, revealing the spots
 inside. Each leaflet's map view uses real coordinates plotted on a
 Thunderforest tile layer via Leaflet.js.
 
-Live site: _add your GitHub Pages URL here once deployed_
+Live site: https://beloslavaa.github.io/mesa-local-guide/
 
 ## Project structure
 
