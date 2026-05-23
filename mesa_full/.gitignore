@@ -1,0 +1,17 @@
+# Secrets — never commit
+data/.env
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.python-version
+
+# macOS
+.DS_Store
+
+# Editors
+.vscode/
+.idea/
