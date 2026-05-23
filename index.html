@@ -40,25 +40,45 @@
     transform-origin: center center;
   }
 
-  /* Phone portrait: just fill the screen naturally */
+  /* ── PHONE PORTRAIT ─────────────────────────────────── */
   @media (max-width: 600px) and (orientation: portrait) {
     html, body { background: var(--paper); }
     .app {
-      width: 100vw;
-      height: 100dvh;
-      box-shadow: none;
-      transform: none;
+      width: 100vw; height: 100dvh;
+      box-shadow: none; transform: none;
     }
-    /* Stack masthead: MESA big on its own line, sub + clock below */
-    .masthead     { padding: 52px 22px 0 !important; }
-    .logo-area    { flex-wrap: wrap; align-items: baseline; gap: 6px !important; }
-    .logo         { font-size: 72px !important; width: 100%; }
-    .logo-sub     { font-size: 24px !important; transform: none !important; }
-    .masthead-clock { font-size: 20px !important; margin-top: 0 !important; margin-left: 10px; }
-    /* Position pile from top so it always clears the masthead */
+    .bottom-bar { bottom: 6dvh !important; height: 12dvh !important; }
+  }
+
+  /* Small phones — iPhone SE, 12 mini, standard (≤390px wide) */
+  @media (max-width: 390px) and (orientation: portrait) {
+    .masthead     { padding: 44px 22px 0 !important; }
+    .logo         { font-size: 80px !important; }
+    .logo-sub     { font-size: 26px !important; transform: none !important; }
+    .masthead-clock { font-size: 20px !important; margin-top: 2px !important; display: block !important; }
+    .stash        { top: 26dvh !important; bottom: auto !important; }
+    .stash-hint   { top: calc(26dvh + 310px + 10px) !important; bottom: auto !important; }
+  }
+
+  /* Regular iPhones — 14, 15, Pro (391–430px wide) */
+  @media (min-width: 391px) and (max-width: 430px) and (orientation: portrait) {
+    .masthead     { padding: 44px 22px 0 !important; }
+    .logo         { font-size: 88px !important; }
+    .logo-sub     { font-size: 28px !important; transform: none !important; }
+    .masthead-clock { font-size: 21px !important; margin-top: 2px !important; display: block !important; }
+    .stash        { top: 24dvh !important; bottom: auto !important; }
+    .stash-hint   { top: calc(24dvh + 310px + 10px) !important; bottom: auto !important; }
+  }
+
+  /* Large Android phones — Samsung Note, Plus models (431–600px wide) */
+  @media (min-width: 431px) and (max-width: 600px) and (orientation: portrait) {
+    .masthead     { padding: 44px 22px 0 !important; }
+    .logo-area    { flex-direction: column; gap: 0 !important; align-items: flex-start !important; }
+    .logo         { font-size: 90px !important; }
+    .logo-sub     { font-size: 28px !important; transform: none !important; margin-top: -4px; }
+    .masthead-clock { font-size: 21px !important; margin-top: 4px !important; display: block !important; }
     .stash        { top: 28dvh !important; bottom: auto !important; }
     .stash-hint   { top: calc(28dvh + 310px + 10px) !important; bottom: auto !important; }
-    .bottom-bar   { bottom: 6dvh !important; height: 12dvh !important; }
   }
 
   /* Paper texture */
