@@ -40,14 +40,14 @@
     transform-origin: center center;
   }
 
-  /* Phone portrait: scale the 420×760 frame to fit the screen.
-     Scale by width but never exceed what height allows either. */
+  /* Phone portrait: just fill the screen naturally */
   @media (max-width: 600px) and (orientation: portrait) {
     html, body { background: var(--paper); }
     .app {
+      width: 100vw;
+      height: 100dvh;
       box-shadow: none;
-      transform: scale(min(calc(100vw / 420), calc(100vh / 760)));
-      transform-origin: center center;
+      transform: none;
     }
   }
 
@@ -73,7 +73,7 @@
 
   /* ── MASTHEAD ────────────────────────────────────────── */
   .masthead {
-    padding: 22px 22px 0;
+    padding: 32px 22px 0;
     text-align: left;
     position: relative;
   }
