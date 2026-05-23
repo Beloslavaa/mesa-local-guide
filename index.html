@@ -49,16 +49,16 @@
       box-shadow: none;
       transform: none;
     }
-    /* Reposition vertically using dvh so it works on any phone height */
-    .stash        { bottom: 30dvh !important; }
-    .stash-hint   { bottom: 25dvh !important; }
-    .bottom-bar   { bottom: 6dvh !important; height: 12dvh !important; }
-    .masthead     { padding: 52px 22px 0 !important; }
     /* Stack masthead: MESA big on its own line, sub + clock below */
+    .masthead     { padding: 52px 22px 0 !important; }
     .logo-area    { flex-wrap: wrap; align-items: baseline; gap: 6px !important; }
     .logo         { font-size: 72px !important; width: 100%; }
     .logo-sub     { font-size: 24px !important; transform: none !important; }
     .masthead-clock { font-size: 20px !important; margin-top: 0 !important; margin-left: 10px; }
+    /* Position pile from top so it always clears the masthead */
+    .stash        { top: 28dvh !important; bottom: auto !important; }
+    .stash-hint   { top: calc(28dvh + 310px + 10px) !important; bottom: auto !important; }
+    .bottom-bar   { bottom: 6dvh !important; height: 12dvh !important; }
   }
 
   /* Paper texture */
