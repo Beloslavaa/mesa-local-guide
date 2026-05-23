@@ -49,6 +49,11 @@
       box-shadow: none;
       transform: none;
     }
+    /* Reposition vertically using dvh so it works on any phone height */
+    .stash        { bottom: 30dvh !important; }
+    .stash-hint   { bottom: 25dvh !important; }
+    .bottom-bar   { bottom: 6dvh !important; height: 12dvh !important; }
+    .masthead     { padding: 52px 22px 0 !important; }
   }
 
   /* Paper texture */
@@ -73,7 +78,7 @@
 
   /* ── MASTHEAD ────────────────────────────────────────── */
   .masthead {
-    padding: 32px 22px 0;
+    padding: 22px 22px 0;
     text-align: left;
     position: relative;
   }
