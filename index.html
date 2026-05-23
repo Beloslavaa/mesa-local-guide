@@ -13,39 +13,19 @@
     --paper-dark: #e4dece;
     --ink: #1a1714;
     --red: #b8321a;
-
-    /* Fixed design dimensions — same as original */
-    --app-w: 420px;
-    --app-h: 760px;
-    --leaf-w: 340px;
-    --leaf-h: 425px;
-    --q-w: 170px;
-    --q-h: 212.5px;
-    --pile-w: 230px;
-    --pile-h: 290px;
     --fs: 1;
+    /* Leaflet and quadrant dimensions derived from --fs */
+    --leaf-w: calc(340px * var(--fs));
+    --leaf-h: calc(425px * var(--fs));
+    --q-w: calc(170px * var(--fs));
+    --q-h: calc(212.5px * var(--fs));
   }
 
-  /* Phone portrait — fill the whole screen, scale everything proportionally */
+  /* Phone portrait: fill the full screen */
   @media (max-width: 500px) and (orientation: portrait) {
-    :root {
-      --app-w: 100vw;
-      --app-h: 100vh;
-      --leaf-w: calc(100vw * 0.81);
-      --leaf-h: calc(var(--leaf-w) * 1.25);
-      --q-w: calc(var(--leaf-w) / 2);
-      --q-h: calc(var(--leaf-h) / 2);
-      --pile-w: calc(100vw * 0.55);
-      --pile-h: calc(var(--pile-w) * 1.26);
-      --fs: calc(100vw / 420);
-    }
-    html, body { background: var(--paper) !important; }
-    .app { box-shadow: none !important; }
-    .stash { bottom: 26vh !important; }
-    .stash-hint { bottom: 22vh !important; }
-    .bottom-bar { bottom: 5vh !important; height: 10vh !important; }
-    .pile-item img { width: calc(var(--pile-w) * 2) !important; height: calc(var(--pile-h) * 2) !important; }
-    .open-hint { margin-top: calc(var(--leaf-h) / -2 - 36px) !important; }
+    html, body { background: var(--paper); }
+    .app { width: 100vw; height: 100dvh; box-shadow: none; }
+    :root { --fs: calc(100vw / 420); }
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
@@ -58,8 +38,7 @@
   }
 
   .app {
-    width: var(--app-w);
-    height: var(--app-h);
+    width: 420px; height: 760px;
     position: relative; overflow: hidden;
     background: var(--paper);
     box-shadow: 0 0 0 1px rgba(0,0,0,0.15), 0 40px 80px rgba(0,0,0,0.6);
@@ -143,10 +122,9 @@
   /* ── NEWSPAPER PILE ──────────────────────────────────── */
   .stash {
     position: absolute;
-    bottom: 260px; left: 50%;
+    bottom: 34%; left: 50%;
     transform: translateX(-50%);
-    width: calc(var(--pile-w) + 20px);
-    height: calc(var(--pile-h) + 20px);
+    width: 56%; height: 40%;
     z-index: 5;
     cursor: pointer;
     transition: opacity 0.35s ease;
@@ -156,8 +134,7 @@
   .pile-item {
     position: absolute;
     top: 50%; left: 50%;
-    width: var(--pile-w);
-    height: var(--pile-h);
+    width: 88%; height: 88%;
     overflow: hidden;
     background: var(--paper);
     box-shadow:
@@ -168,7 +145,7 @@
   }
   /* Pile preview shows only top-left quadrant of the leaflet */
   .pile-item img {
-    width: 460px; height: 580px;
+    width: 200%; height: 200%;
     object-fit: cover;
     object-position: top left;
     display: block;
@@ -193,7 +170,7 @@
   /* "tap to open" hint */
   .stash-hint {
     position: absolute;
-    bottom: 220px;
+    bottom: 28%;
     left: 50%;
     font-family: 'Just Me Again Down Here', cursive;
     font-size: calc(21px * var(--fs));
@@ -383,8 +360,8 @@
 
   /* ── BOTTOM ARCHIVE BUTTON ───────────────────────────── */
   .bottom-bar {
-    position: absolute; bottom: 56px; left: 0; right: 0;
-    height: 90px;
+    position: absolute; bottom: 4%; left: 0; right: 0;
+    height: 13%;
     display: flex; align-items: center; justify-content: center;
     gap: calc(72px * var(--fs));
     z-index: 11;
