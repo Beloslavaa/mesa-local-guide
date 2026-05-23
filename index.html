@@ -13,25 +13,57 @@
     --paper-dark: #e4dece;
     --ink: #1a1714;
     --red: #b8321a;
+
+    /* Fixed design dimensions — same as original */
+    --app-w: 420px;
+    --app-h: 760px;
+    --leaf-w: 340px;
+    --leaf-h: 425px;
+    --q-w: 170px;
+    --q-h: 212.5px;
+    --pile-w: 230px;
+    --pile-h: 290px;
+    --fs: 1;
+  }
+
+  /* Phone portrait — fill the whole screen, scale everything proportionally */
+  @media (max-width: 500px) and (orientation: portrait) {
+    :root {
+      --app-w: 100vw;
+      --app-h: 100vh;
+      --leaf-w: calc(100vw * 0.81);
+      --leaf-h: calc(var(--leaf-w) * 1.25);
+      --q-w: calc(var(--leaf-w) / 2);
+      --q-h: calc(var(--leaf-h) / 2);
+      --pile-w: calc(100vw * 0.55);
+      --pile-h: calc(var(--pile-w) * 1.26);
+      --fs: calc(100vw / 420);
+    }
+    html, body { background: var(--paper) !important; }
+    .app { box-shadow: none !important; }
+    .stash { bottom: 26vh !important; }
+    .stash-hint { bottom: 22vh !important; }
+    .bottom-bar { bottom: 5vh !important; height: 10vh !important; }
+    .pile-item img { width: calc(var(--pile-w) * 2) !important; height: calc(var(--pile-h) * 2) !important; }
+    .open-hint { margin-top: calc(var(--leaf-h) / -2 - 36px) !important; }
   }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
 
   html, body {
-    height: 100%;
+    height: 100%; width: 100%;
     background: #2a2520;
     display: flex; align-items: center; justify-content: center;
     overflow: hidden;
   }
 
   .app {
-    width: 420px; height: 760px;
+    width: var(--app-w);
+    height: var(--app-h);
     position: relative; overflow: hidden;
     background: var(--paper);
     box-shadow: 0 0 0 1px rgba(0,0,0,0.15), 0 40px 80px rgba(0,0,0,0.6);
-  }
-  @media (max-width: 420px) {
-    .app { width: 100%; height: 100vh; }
+    flex-shrink: 0;
   }
 
   /* Paper texture */
@@ -60,16 +92,15 @@
     text-align: left;
     position: relative;
   }
-  .logo-area { display: flex; align-items: baseline; gap: 14px; }
+  .logo-area { display: flex; align-items: baseline; gap: calc(14px * var(--fs)); }
   .logo {
     font-family: 'Just Me Again Down Here', cursive;
-    font-size: 90px;
+    font-size: calc(90px * var(--fs));
     line-height: 0.85;
     color: var(--ink);
     letter-spacing: 3px;
     transform: rotate(-1.5deg);
     display: inline-block;
-    /* Fake-bold via text-shadow since this font has only one weight */
     text-shadow:
       0.5px 0 0 var(--ink),
       -0.5px 0 0 var(--ink),
@@ -78,7 +109,7 @@
   }
   .logo-sub {
     font-family: 'Just Me Again Down Here', cursive;
-    font-size: 30px;
+    font-size: calc(30px * var(--fs));
     color: var(--ink);
     opacity: 0.55;
     letter-spacing: 1px;
@@ -87,7 +118,7 @@
   }
   .masthead-clock {
     font-family: 'Just Me Again Down Here', cursive;
-    font-size: 22px;
+    font-size: calc(22px * var(--fs));
     color: var(--ink);
     opacity: 0.45;
     margin-top: 4px;
@@ -114,7 +145,8 @@
     position: absolute;
     bottom: 260px; left: 50%;
     transform: translateX(-50%);
-    width: 250px; height: 310px;
+    width: calc(var(--pile-w) + 20px);
+    height: calc(var(--pile-h) + 20px);
     z-index: 5;
     cursor: pointer;
     transition: opacity 0.35s ease;
@@ -124,7 +156,8 @@
   .pile-item {
     position: absolute;
     top: 50%; left: 50%;
-    width: 230px; height: 290px;
+    width: var(--pile-w);
+    height: var(--pile-h);
     overflow: hidden;
     background: var(--paper);
     box-shadow:
@@ -163,7 +196,7 @@
     bottom: 220px;
     left: 50%;
     font-family: 'Just Me Again Down Here', cursive;
-    font-size: 21px;
+    font-size: calc(21px * var(--fs));
     color: var(--ink);
     opacity: 0.55;
     z-index: 6;
@@ -196,16 +229,14 @@
       drop-shadow(4px 4px 0 var(--ink))
       drop-shadow(0 16px 30px rgba(0,0,0,0.35));
   }
-  .leaflet-wrap.dismissing {
-    /* JS sets transform via inline style */
-  }
 
   .leaflet {
     position: relative;
-    width: 340px; height: 425px;
+    width: var(--leaf-w);
+    height: var(--leaf-h);
     transform-style: preserve-3d;
     /* Closed state: shifted so Q1 is centered in view */
-    transform: translate(85px, 106.25px);
+    transform: translate(calc(var(--q-w)), calc(var(--q-h)));
     transition: transform 0.7s cubic-bezier(0.34, 1.15, 0.64, 1);
     cursor: pointer;
   }
@@ -215,7 +246,8 @@
 
   .quad {
     position: absolute;
-    width: 170px; height: 212.5px;
+    width: var(--q-w);
+    height: var(--q-h);
     overflow: hidden;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
@@ -230,9 +262,9 @@
   /* Q1 — always visible, the cover */
   .q1 { top: 0; left: 0; z-index: 2; background: var(--paper); }
 
-  /* Q2 — top-right, folded behind Q1 when closed (rotateY -180), unfolds to 0 */
+  /* Q2 — top-right */
   .q2 {
-    top: 0; left: 170px;
+    top: 0; left: var(--q-w);
     transform-origin: left center;
     transform: rotateY(-180deg);
     transition: transform 0.65s cubic-bezier(0.32, 1.1, 0.58, 1);
@@ -251,9 +283,9 @@
     z-index: 1;
   }
 
-  /* Q3 — bottom-left, folded up behind Q1 when closed (rotateX 180), unfolds to 0 */
+  /* Q3 — bottom-left */
   .q3 {
-    top: 212.5px; left: 0;
+    top: var(--q-h); left: 0;
     transform-origin: center top;
     transform: rotateX(180deg);
     transition: transform 0.7s cubic-bezier(0.34, 1.15, 0.64, 1) 0.35s;
@@ -269,9 +301,9 @@
     z-index: 1;
   }
 
-  /* Q4 — bottom-right, folded up behind Q2 when closed */
+  /* Q4 — bottom-right */
   .q4 {
-    top: 212.5px; left: 170px;
+    top: var(--q-h); left: var(--q-w);
     transform-origin: center top;
     transform: rotateX(180deg);
     transition: transform 0.7s cubic-bezier(0.34, 1.15, 0.64, 1) 0.35s;
@@ -289,7 +321,7 @@
 
   /* Crease lines */
   .crease-v {
-    position: absolute; top: 0; bottom: 0; left: 170px;
+    position: absolute; top: 0; bottom: 0; left: var(--q-w);
     width: 2px;
     background: linear-gradient(180deg,
       transparent, rgba(0,0,0,0.15) 20%, rgba(0,0,0,0.22) 50%,
@@ -299,7 +331,7 @@
     transition: opacity 0.3s ease 0s;
   }
   .crease-h {
-    position: absolute; left: 0; right: 0; top: 212.5px;
+    position: absolute; left: 0; right: 0; top: var(--q-h);
     height: 2px;
     background: linear-gradient(90deg,
       transparent, rgba(0,0,0,0.15) 20%, rgba(0,0,0,0.22) 50%,
@@ -325,12 +357,11 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    /* Sit ~260px above the viewer center — comfortably above the 425px leaflet */
-    margin-top: -260px;
+    margin-top: calc(var(--leaf-h) / -2 - 36px);
     font-family: 'Just Me Again Down Here', cursive;
-    font-size: 21px;
+    font-size: calc(21px * var(--fs));
     color: var(--ink); opacity: 0;
-    transition: opacity 0.4s ease 0.4s;
+    transition: opacity 0.2s ease;
     pointer-events: none;
     white-space: nowrap;
     transform: translateX(-50%);
@@ -339,6 +370,11 @@
   .viewer.opened .open-hint {
     opacity: 0.55;
     animation: wobble-open-hint 2.5s ease-in-out infinite 1.2s;
+  }
+  .viewer:not(.opened) .open-hint {
+    opacity: 0;
+    transition: none;
+    animation: none;
   }
   @keyframes wobble-open-hint {
     0%,100% { transform: translateX(-50%) rotate(-1.5deg); opacity: 0.45; }
@@ -350,17 +386,17 @@
     position: absolute; bottom: 56px; left: 0; right: 0;
     height: 90px;
     display: flex; align-items: center; justify-content: center;
-    gap: 72px;
+    gap: calc(72px * var(--fs));
     z-index: 11;
   }
   .archive-btn {
     font-family: 'Just Me Again Down Here', cursive;
-    font-size: 28px;
+    font-size: calc(28px * var(--fs));
     color: var(--ink);
     cursor: pointer;
     border: none;
     background: transparent;
-    padding: 8px 20px;
+    padding: calc(8px * var(--fs)) calc(20px * var(--fs));
     transform: rotate(-1deg);
     transition: transform 0.18s ease;
     position: relative;
@@ -380,7 +416,7 @@
   /* ── "best now" button — red, spiky oval ─────────────── */
   .bestnow-btn {
     font-family: 'Just Me Again Down Here', cursive;
-    font-size: 28px;
+    font-size: calc(28px * var(--fs));
     color: var(--red);
     cursor: pointer;
     border: none;
@@ -434,7 +470,7 @@
   }
   .archive-title {
     font-family: 'Just Me Again Down Here', cursive;
-    font-size: 88px; line-height: 0.85;
+    font-size: calc(88px * var(--fs)); line-height: 0.85;
     color: var(--ink);
     letter-spacing: 2px;
     transform: rotate(-1.5deg);
@@ -445,7 +481,7 @@
   }
   .archive-close {
     font-family: 'Just Me Again Down Here', cursive;
-    font-size: 24px;
+    font-size: calc(24px * var(--fs));
     color: var(--ink); opacity: 0.55;
     cursor: pointer; border: none; background: none;
     margin-bottom: 6px;
@@ -493,7 +529,7 @@
   }
   .map-title {
     font-family: 'Just Me Again Down Here', cursive;
-    font-size: 86px; line-height: 0.85;
+    font-size: calc(86px * var(--fs)); line-height: 0.85;
     color: var(--ink);
     letter-spacing: 2px;
     transform: rotate(-1deg); display: inline-block;
@@ -504,7 +540,7 @@
   .map-back {
     position: absolute; top: 36px; right: 22px;
     font-family: 'Just Me Again Down Here', cursive;
-    font-size: 24px;
+    font-size: calc(24px * var(--fs));
     color: var(--ink); opacity: 0.55;
     cursor: pointer; border: none; background: none;
     transition: opacity 0.2s;
@@ -514,7 +550,7 @@
   .map-area {
     flex: 1; position: relative;
     background: var(--paper); overflow: hidden;
-    min-height: 280px;
+    min-height: 200px;
   }
   #leafletMap {
     width: 100%; height: 100%;
@@ -560,7 +596,7 @@
   }
   .map-marker .pin-lbl {
     font-family: 'Just Me Again Down Here', cursive;
-    font-size: 22px; color: var(--ink);
+    font-size: calc(22px * var(--fs)); color: var(--ink);
     background: rgba(240,235,224,0.95);
     padding: 0 7px;
     transform: rotate(-0.5deg);
@@ -606,18 +642,18 @@
   .map-row:active { transform: translateX(2px) scale(0.99); }
   .map-row .n {
     font-family: 'Just Me Again Down Here', cursive;
-    font-size: 26px; color: var(--red);
-    min-width: 26px;
+    font-size: calc(26px * var(--fs)); color: var(--red);
+    min-width: calc(26px * var(--fs));
   }
   .map-row .name {
     font-family: 'Just Me Again Down Here', cursive;
-    font-size: 28px; color: var(--ink);
+    font-size: calc(28px * var(--fs)); color: var(--ink);
     flex: 1;
     line-height: 1;
   }
   .map-row .dist {
     font-family: 'Just Me Again Down Here', cursive;
-    font-size: 18px; letter-spacing: 0;
+    font-size: calc(18px * var(--fs)); letter-spacing: 0;
     color: var(--ink); opacity: 0.45;
   }
 
@@ -634,7 +670,7 @@
 
   .bestnow-title {
     font-family: 'Just Me Again Down Here', cursive;
-    font-size: 72px; line-height: 0.85;
+    font-size: calc(72px * var(--fs)); line-height: 0.85;
     color: var(--red);
     letter-spacing: 2px;
     transform: rotate(-1deg); display: inline-block;
@@ -661,8 +697,8 @@
   .bestnow-row:active { transform: translateX(2px) scale(0.99); }
   .bestnow-row .rank {
     font-family: 'Just Me Again Down Here', cursive;
-    font-size: 30px; color: var(--red);
-    min-width: 30px;
+    font-size: calc(30px * var(--fs)); color: var(--red);
+    min-width: calc(30px * var(--fs));
   }
   .bestnow-row .info {
     flex: 1; display: flex; flex-direction: column;
@@ -670,32 +706,32 @@
   }
   .bestnow-row .name {
     font-family: 'Just Me Again Down Here', cursive;
-    font-size: 28px; color: var(--ink);
+    font-size: calc(28px * var(--fs)); color: var(--ink);
     line-height: 1.1;
   }
   .bestnow-row .reason {
     font-family: 'Just Me Again Down Here', cursive;
-    font-size: 17px;
+    font-size: calc(17px * var(--fs));
     color: var(--ink); opacity: 0.5;
     margin-top: 2px;
   }
   .bestnow-row .score {
     font-family: 'Just Me Again Down Here', cursive;
-    font-size: 32px; color: var(--red);
+    font-size: calc(32px * var(--fs)); color: var(--red);
     line-height: 1;
-    min-width: 56px; text-align: right;
+    min-width: calc(56px * var(--fs)); text-align: right;
     text-shadow:
       0.5px 0 0 var(--red), -0.5px 0 0 var(--red),
       0 0.5px 0 var(--red), 0 -0.5px 0 var(--red);
   }
   .bestnow-row .score-out {
-    font-size: 16px; opacity: 0.5; font-weight: normal;
+    font-size: calc(16px * var(--fs)); opacity: 0.5; font-weight: normal;
     text-shadow: none;
   }
   .bestnow-empty {
     padding: 40px 22px;
     font-family: 'Just Me Again Down Here', cursive;
-    font-size: 22px;
+    font-size: calc(22px * var(--fs));
     color: var(--ink); opacity: 0.6;
     text-align: center;
     line-height: 1.4;
@@ -961,11 +997,11 @@ function openTopLeaflet() {
     }, 150);
   }, 400);
 
-  // 6. Mark "opened" after the full unfold completes (~1.5s total)
+  // 6. Mark "opened" after the full unfold completes (~1.1s total)
   setTimeout(() => {
     viewer.classList.add('opened');
     isAnimating = false;
-  }, 800);
+  }, 1100);
 }
 
 // ── TAP OPEN LEAFLET → map ───────────────────────────────────────
