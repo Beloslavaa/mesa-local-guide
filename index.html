@@ -40,17 +40,14 @@
     transform-origin: center center;
   }
 
-  /* Phone portrait: scale the 420×760 frame to fill the screen.
-     No layout changes needed — just uniform scaling. */
-  @media (max-width: 500px) and (orientation: portrait) {
+  /* Phone portrait: scale the 420×760 frame to fit the screen.
+     Scale by width but never exceed what height allows either. */
+  @media (max-width: 600px) and (orientation: portrait) {
     html, body { background: var(--paper); }
     .app {
-      /* Scale to fit width, keeping aspect ratio */
-      transform: scale(calc(100vw / 420));
       box-shadow: none;
-      /* Adjust margin to account for scaling so it fills height too */
-      margin-top: calc((100vh - 760px) / 2 * (100vw / 420));
-      margin-bottom: calc((100vh - 760px) / 2 * (100vw / 420));
+      transform: scale(min(calc(100vw / 420), calc(100vh / 760)));
+      transform-origin: center center;
     }
   }
 
