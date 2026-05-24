@@ -43,42 +43,104 @@
   /* ── PHONE PORTRAIT ─────────────────────────────────── */
   @media (max-width: 600px) and (orientation: portrait) {
     html, body { background: var(--paper); }
-    .app {
-      width: 100vw; height: 100dvh;
-      box-shadow: none; transform: none;
-    }
-    .bottom-bar { bottom: 6dvh !important; height: 12dvh !important; }
+    .app { width: 100vw; height: 100dvh; box-shadow: none; transform: none; }
+    .bottom-bar     { bottom: 6dvh !important; height: 12dvh !important; }
+    .masthead-clock { display: block !important; }
+    .logo-sub       { transform: none !important; }
+    .map-list       { overflow-y: auto !important; -webkit-overflow-scrolling: touch !important;
+                      padding-bottom: 20px !important; max-height: 38dvh !important; }
+    .bestnow-list   { overflow-y: auto !important; -webkit-overflow-scrolling: touch !important;
+                      padding-bottom: 20px !important; max-height: 38dvh !important; }
+    .archive        { overflow-y: auto !important; }
   }
 
-  /* Small phones — iPhone SE, 12 mini, standard (≤390px wide) */
-  @media (max-width: 390px) and (orientation: portrait) {
-    .masthead     { padding: 18px 22px 0 !important; }
-    .logo         { font-size: 80px !important; }
-    .logo-sub     { font-size: 26px !important; transform: none !important; }
-    .masthead-clock { font-size: 20px !important; margin-top: 2px !important; display: block !important; }
-    .stash        { top: 26dvh !important; bottom: auto !important; }
-    .stash-hint   { top: calc(26dvh + 310px + 10px) !important; bottom: auto !important; }
+  /* XS — Galaxy S25, iPhone SE, small Androids (≤375px) */
+  @media (max-width: 375px) and (orientation: portrait) {
+    .masthead       { padding: 14px 18px 0 !important; }
+    .logo           { font-size: 72px !important; }
+    .logo-sub       { font-size: 22px !important; }
+    .masthead-clock { font-size: 18px !important; margin-top: 2px !important; }
+    .stash          { top: 24dvh !important; bottom: auto !important;
+                      width: 200px !important; height: 260px !important; }
+    .pile-item      { width: 190px !important; height: 240px !important; }
+    .stash-hint     { top: calc(24dvh + 260px + 8px) !important; bottom: auto !important;
+                      font-size: 17px !important; }
+    .bottom-bar     { gap: 40px !important; }
+    .archive-btn    { font-size: 22px !important; }
+    .bestnow-btn    { font-size: 22px !important; }
+    .map-title      { font-size: 60px !important; }
+    .bestnow-title  { font-size: 54px !important; }
+    .archive-title  { font-size: 60px !important; }
+    .map-head       { padding: 14px 16px 10px !important; }
+    .map-row .name  { font-size: 22px !important; }
+    .map-row .n     { font-size: 20px !important; }
+    .bestnow-row .name   { font-size: 22px !important; }
+    .bestnow-row .reason { font-size: 14px !important; }
+    .bestnow-row .score  { font-size: 26px !important; }
   }
 
-  /* Regular iPhones — 14, 15, Pro (391–430px wide) */
+  /* S — iPhone SE 3rd gen, some mid-range Androids (376–390px) */
+  @media (min-width: 376px) and (max-width: 390px) and (orientation: portrait) {
+    .masthead       { padding: 18px 22px 0 !important; }
+    .logo           { font-size: 80px !important; }
+    .logo-sub       { font-size: 26px !important; }
+    .masthead-clock { font-size: 20px !important; margin-top: 2px !important; }
+    .stash          { top: 26dvh !important; bottom: auto !important;
+                      width: 220px !important; height: 275px !important; }
+    .pile-item      { width: 210px !important; height: 265px !important; }
+    .stash-hint     { top: calc(26dvh + 275px + 8px) !important; bottom: auto !important; }
+    .bottom-bar     { gap: 50px !important; }
+    .archive-btn    { font-size: 24px !important; }
+    .bestnow-btn    { font-size: 24px !important; }
+    .map-title      { font-size: 70px !important; }
+    .bestnow-title  { font-size: 62px !important; }
+    .archive-title  { font-size: 70px !important; }
+    .map-row .name  { font-size: 24px !important; }
+    .map-row .n     { font-size: 22px !important; }
+    .bestnow-row .name   { font-size: 24px !important; }
+    .bestnow-row .reason { font-size: 15px !important; }
+    .bestnow-row .score  { font-size: 28px !important; }
+  }
+
+  /* M — iPhone 14, 15, 16, Pro + Galaxy S25+/Ultra (391–430px) */
   @media (min-width: 391px) and (max-width: 430px) and (orientation: portrait) {
-    .masthead     { padding: 18px 22px 0 !important; }
-    .logo         { font-size: 88px !important; }
-    .logo-sub     { font-size: 28px !important; transform: none !important; }
-    .masthead-clock { font-size: 21px !important; margin-top: 2px !important; display: block !important; }
-    .stash        { top: 24dvh !important; bottom: auto !important; }
-    .stash-hint   { top: calc(24dvh + 310px + 10px) !important; bottom: auto !important; }
+    .masthead       { padding: 18px 22px 0 !important; }
+    .logo           { font-size: 88px !important; }
+    .logo-sub       { font-size: 28px !important; transform: none !important; }
+    .masthead-clock { font-size: 21px !important; margin-top: 2px !important; }
+    .stash          { top: 24dvh !important; bottom: auto !important; }
+    .stash-hint     { top: calc(24dvh + 310px + 10px) !important; bottom: auto !important; }
   }
 
-  /* Large Android phones — Samsung Note, Plus models (431–600px wide) */
-  @media (min-width: 431px) and (max-width: 600px) and (orientation: portrait) {
-    .masthead     { padding: 18px 22px 0 !important; }
-    .logo-area    { flex-direction: column; gap: 0 !important; align-items: flex-start !important; }
-    .logo         { font-size: 90px !important; }
-    .logo-sub     { font-size: 28px !important; transform: none !important; margin-top: -4px; }
-    .masthead-clock { font-size: 21px !important; margin-top: 4px !important; display: block !important; }
-    .stash        { top: 28dvh !important; bottom: auto !important; }
-    .stash-hint   { top: calc(28dvh + 310px + 10px) !important; bottom: auto !important; }
+  /* L — iPhone 15/16 Plus, Pro Max (431–440px) */
+  @media (min-width: 431px) and (max-width: 440px) and (orientation: portrait) {
+    .masthead       { padding: 20px 24px 0 !important; }
+    .logo           { font-size: 90px !important; }
+    .logo-sub       { font-size: 28px !important; }
+    .masthead-clock { font-size: 21px !important; margin-top: 2px !important; }
+    .stash          { top: 24dvh !important; bottom: auto !important;
+                      width: 265px !important; height: 325px !important; }
+    .pile-item      { width: 250px !important; height: 310px !important; }
+    .stash-hint     { top: calc(24dvh + 325px + 10px) !important; bottom: auto !important; }
+    .bottom-bar     { gap: 80px !important; }
+    .archive-btn    { font-size: 28px !important; }
+    .bestnow-btn    { font-size: 28px !important; }
+  }
+
+  /* XL — Samsung Note Ultra, wide Androids (441–600px) */
+  @media (min-width: 441px) and (max-width: 600px) and (orientation: portrait) {
+    .masthead       { padding: 18px 22px 0 !important; }
+    .logo-area      { flex-direction: column; gap: 0 !important; align-items: flex-start !important; }
+    .logo           { font-size: 90px !important; }
+    .logo-sub       { font-size: 28px !important; margin-top: -4px !important; }
+    .masthead-clock { font-size: 21px !important; margin-top: 4px !important; }
+    .stash          { top: 26dvh !important; bottom: auto !important;
+                      width: 280px !important; height: 345px !important; }
+    .pile-item      { width: 265px !important; height: 330px !important; }
+    .stash-hint     { top: calc(26dvh + 345px + 10px) !important; bottom: auto !important; }
+    .bottom-bar     { gap: 90px !important; }
+    .archive-btn    { font-size: 28px !important; }
+    .bestnow-btn    { font-size: 28px !important; }
   }
 
   /* Paper texture */
