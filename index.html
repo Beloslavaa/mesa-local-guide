@@ -440,24 +440,37 @@
     font-family: 'Just Me Again Down Here', cursive;
     font-size: calc(21px * var(--fs));
     color: var(--ink); opacity: 0;
-    transition: opacity 0.2s ease;
     pointer-events: none;
     white-space: nowrap;
     transform: translateX(-50%);
     z-index: 60;
   }
-  .viewer.opened .open-hint {
-    opacity: 0.55;
-    animation: wobble-open-hint 2.5s ease-in-out infinite 1.2s;
-  }
+  /* Both hints hidden when viewer is not opened */
   .viewer:not(.opened) .open-hint {
     opacity: 0;
-    transition: none;
     animation: none;
   }
-  @keyframes wobble-open-hint {
-    0%,100% { transform: translateX(-50%) rotate(-1.5deg); opacity: 0.45; }
-    50%     { transform: translateX(-50%) rotate(-0.5deg); opacity: 0.7; }
+  /* When opened: alternate between the two hints */
+  .viewer.opened .hint-turn {
+    animation: blink-turn 4s ease-in-out infinite;
+  }
+  .viewer.opened .hint-close {
+    animation: blink-close 4s ease-in-out infinite;
+  }
+
+  @keyframes blink-turn {
+    0%   { opacity: 0; }
+    5%   { opacity: 0.6; }
+    45%  { opacity: 0.6; }
+    50%  { opacity: 0; }
+    100% { opacity: 0; }
+  }
+  @keyframes blink-close {
+    0%   { opacity: 0; }
+    50%  { opacity: 0; }
+    55%  { opacity: 0.6; }
+    95%  { opacity: 0.6; }
+    100% { opacity: 0; }
   }
 
   /* ── BOTTOM ARCHIVE BUTTON ───────────────────────────── */
@@ -849,7 +862,8 @@
           <div class="crease-h"></div>
         </div>
       </div>
-      <div class="open-hint">tap to turn</div>
+      <div class="open-hint hint-turn">tap to turn</div>
+      <div class="open-hint hint-close">tap outside to close</div>
     </div>
 
     <!-- ARCHIVE button -->
