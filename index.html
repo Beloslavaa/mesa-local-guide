@@ -1070,31 +1070,58 @@ function openTopLeaflet() {
   // 1. Load the right slice images into all 4 quadrants
   setLeafletImage(leafletsData[topIdx].img);
 
-  // 2. Make sure the leaflet starts CLOSED (no .is-open class)
+  // 2. Make sure the leaflet starts CLOSED
   leaf.classList.remove('is-open');
-  // Force a reflow so the browser commits the closed state before the next change
   void leaf.offsetHeight;
 
-  // 3. Lift the top pile item visually
-  if (topItem) topItem.classList.add('lifting');
+  // 3. Calculate where the pile card is and where the viewer center is
+  const appEl = document.querySelector('.app');
+  const appRect = appEl.getBoundingClientRect();
+  const pileRect = topItem.getBoundingClientRect();
+
+  // Pile card center relative to app center
+  const appCenterX = appRect.left + appRect.width / 2;
+  const appCenterY = appRect.top + appRect.height / 2;
+  const pileCenterX = pileRect.left + pileRect.width / 2;
+  const pileCenterY = pileRect.top + pileRect.height / 2;
+
+  const dx = pileCenterX - appCenterX;
+  const dy = pileCenterY - appCenterY;
+
+  // Scale: pile card size vs Q1 display size (so it matches visually)
+  const qw = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--q-w'));
+  const scaleRatio = pileRect.width / qw;
+
+  // 4. Hide pile card instantly (no fly-up animation)
+  if (topItem) topItem.style.opacity = '0';
   stashHint.classList.add('gone');
 
-  // 4. After pile lift animation finishes, show viewer and unfold
-  setTimeout(() => {
-    viewer.classList.add('visible');
-    // Force another reflow before toggling open
-    void leaf.offsetHeight;
-    // 5. Tiny delay to let the viewer fade in, then unfold
-    setTimeout(() => {
-      leaf.classList.add('is-open');
-    }, 150);
-  }, 400);
+  // 5. Position leaflet-wrap at the pile card's location, show viewer instantly
+  leafWrap.style.transition = 'none';
+  leafWrap.style.transform = `translate(${dx}px, ${dy}px) scale(${scaleRatio}) rotate(3.5deg)`;
+  viewer.style.transition = 'none';
+  viewer.classList.add('visible');
+  void leafWrap.offsetHeight; // commit the starting position
 
-  // 6. Mark "opened" after the full unfold completes (~1.1s total)
+  // 6. Animate from pile position to center (smooth fly)
+  requestAnimationFrame(() => {
+    leafWrap.style.transition = 'transform 0.55s cubic-bezier(0.34, 1.15, 0.64, 1)';
+    leafWrap.style.transform = 'translate(0, 0) scale(1) rotate(0deg)';
+  });
+
+  // 7. After the fly completes, start the unfold
+  setTimeout(() => {
+    leaf.classList.add('is-open');
+  }, 550);
+
+  // 8. Mark "opened" after unfold completes
   setTimeout(() => {
     viewer.classList.add('opened');
+    viewer.style.transition = '';
+    leafWrap.style.transition = '';
+    leafWrap.style.transform = '';
     isAnimating = false;
-  }, 1100);
+  }, 1650);
 }
 
 // ── TAP OPEN LEAFLET → map ───────────────────────────────────────
