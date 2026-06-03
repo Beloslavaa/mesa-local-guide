@@ -314,13 +314,7 @@
     width: var(--leaf-w);
     height: var(--leaf-h);
     transform-style: preserve-3d;
-    /* Closed state: shifted so Q1 is centered in view */
-    transform: translate(calc(var(--q-w)), calc(var(--q-h)));
-    transition: transform 0.7s cubic-bezier(0.34, 1.15, 0.64, 1);
     cursor: pointer;
-  }
-  .leaflet.is-open {
-    transform: translate(0, 0);
   }
 
   .quad {
@@ -1067,54 +1061,57 @@ function openTopLeaflet() {
   currentIdx = topIdx;
   const topItem = stash.querySelector('.pile-item[data-pos="0"]');
 
-  // 1. Load the right slice images into all 4 quadrants
+  // 1. Load slice images
   setLeafletImage(leafletsData[topIdx].img);
 
-  // 2. Make sure the leaflet starts CLOSED
+  // 2. Ensure leaflet starts without is-open
   leaf.classList.remove('is-open');
   void leaf.offsetHeight;
 
-  // 3. Calculate where the pile card is and where the viewer center is
+  // 3. Calculate positions
   const appEl = document.querySelector('.app');
   const appRect = appEl.getBoundingClientRect();
   const pileRect = topItem.getBoundingClientRect();
+  const style = getComputedStyle(document.documentElement);
+  const qw = parseFloat(style.getPropertyValue('--q-w'));
+  const qh = parseFloat(style.getPropertyValue('--q-h'));
 
-  // Pile card center relative to app center
   const appCenterX = appRect.left + appRect.width / 2;
   const appCenterY = appRect.top + appRect.height / 2;
   const pileCenterX = pileRect.left + pileRect.width / 2;
   const pileCenterY = pileRect.top + pileRect.height / 2;
 
-  const dx = pileCenterX - appCenterX;
-  const dy = pileCenterY - appCenterY;
-
-  // Scale: pile card size vs Q1 display size (so it matches visually)
-  const qw = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--q-w'));
+  // Scale: pile card size vs Q1 display size
   const scaleRatio = pileRect.width / qw;
 
-  // 4. Hide pile card instantly (no fly-up animation)
+  // Q1's center sits at (appCenter - qw/2, appCenter - qh/2) when leaflet-wrap is at (0,0).
+  // Account for this offset + scale when calculating the starting position.
+  const dx = pileCenterX - appCenterX + (qw / 2) * scaleRatio;
+  const dy = pileCenterY - appCenterY + (qh / 2) * scaleRatio;
+
+  // 4. Hide pile card instantly
   if (topItem) topItem.style.opacity = '0';
   stashHint.classList.add('gone');
 
-  // 5. Position leaflet-wrap at the pile card's location, show viewer instantly
+  // 5. Position leaflet-wrap at pile card's location, show viewer instantly
   leafWrap.style.transition = 'none';
   leafWrap.style.transform = `translate(${dx}px, ${dy}px) scale(${scaleRatio}) rotate(3.5deg)`;
   viewer.style.transition = 'none';
   viewer.classList.add('visible');
-  void leafWrap.offsetHeight; // commit the starting position
+  void leafWrap.offsetHeight;
 
-  // 6. Animate from pile position to center (smooth fly)
+  // 6. Fly from pile to upper-left (where Q1 naturally sits)
   requestAnimationFrame(() => {
     leafWrap.style.transition = 'transform 0.55s cubic-bezier(0.34, 1.15, 0.64, 1)';
     leafWrap.style.transform = 'translate(0, 0) scale(1) rotate(0deg)';
   });
 
-  // 7. After the fly completes, start the unfold
+  // 7. After fly completes, unfold Q2/Q3/Q4
   setTimeout(() => {
     leaf.classList.add('is-open');
   }, 550);
 
-  // 8. Mark "opened" after unfold completes
+  // 8. Mark opened after unfold completes
   setTimeout(() => {
     viewer.classList.add('opened');
     viewer.style.transition = '';
