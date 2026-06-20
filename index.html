@@ -1019,10 +1019,11 @@ function openTopLeaflet() {
   const dx = pileCenterX - appCenterX + (qw / 2) * scaleRatio;
   const dy = pileCenterY - appCenterY + (qh / 2) * scaleRatio;
 
-  if (topItem) topItem.style.opacity = '0';
-  stashHint.classList.add('gone');
-
   imagesReady.then(() => {
+    // Hide pile card at the same moment we show the viewer — no gap
+    if (topItem) topItem.style.opacity = '0';
+    stashHint.classList.add('gone');
+
     // Keep viewer invisible while we position everything
     viewer.style.opacity = '0';
     viewer.style.transition = 'none';
