@@ -808,10 +808,14 @@
 
   @media (min-width: 900px) and (orientation: landscape) {
     :root {
-      --leaf-w: 580px;
-      --leaf-h: 725px;
-      --q-w: 290px;
-      --q-h: 362.5px;
+      /* scale with viewport height so the opened leaflet never overflows
+         a short window, while staying close to its original 580x725 size
+         on a normal-height desktop screen. Aspect ratio (0.8) matches the
+         leaflet artwork and is preserved at any size. */
+      --leaf-h: clamp(380px, 82vh, 780px);
+      --leaf-w: calc(var(--leaf-h) * 0.8);
+      --q-w: calc(var(--leaf-w) / 2);
+      --q-h: calc(var(--leaf-h) / 2);
     }
 
     .desktop-sea { display: block; }
@@ -1121,9 +1125,9 @@ function openTopLeaflet(originRect) {
   const appEl = document.querySelector('.app');
   const appRect = appEl.getBoundingClientRect();
   const pileRect = originRect || topItem.getBoundingClientRect();
-  const style = getComputedStyle(document.documentElement);
-  const qw = parseFloat(style.getPropertyValue('--q-w'));
-  const qh = parseFloat(style.getPropertyValue('--q-h'));
+  const q1Rect = document.querySelector('.q1').getBoundingClientRect();
+  const qw = q1Rect.width;
+  const qh = q1Rect.height;
 
   const appCenterX = appRect.left + appRect.width / 2;
   const appCenterY = appRect.top + appRect.height / 2;
@@ -1275,9 +1279,9 @@ function dismissLeafletToSea() {
 
   const appEl = document.querySelector('.app');
   const appRect = appEl.getBoundingClientRect();
-  const style = getComputedStyle(document.documentElement);
-  const qw = parseFloat(style.getPropertyValue('--q-w'));
-  const qh = parseFloat(style.getPropertyValue('--q-h'));
+  const q1Rect = document.querySelector('.q1').getBoundingClientRect();
+  const qw = q1Rect.width;
+  const qh = q1Rect.height;
 
   const appCenterX = appRect.left + appRect.width / 2;
   const appCenterY = appRect.top + appRect.height / 2;
@@ -1538,12 +1542,12 @@ stash.addEventListener('click', () => {
 
 /* ── DESKTOP LANDSCAPE: SEA OF LEAFLETS ─────────────────── */
 const seaLayout = [
-  { idx: 2, fx: 0.32, fy: 0.36, w: 300, rot: 5 },
-  { idx: 4, fx: 0.80, fy: 0.48, w: 300, rot: 9 },
-  { idx: 1, fx: 0.20, fy: 0.68, w: 300, rot: 7 },
-  { idx: 3, fx: 0.42, fy: 0.68, w: 300, rot: -7 },
-  { idx: 5, fx: 0.62, fy: 0.72, w: 300, rot: -8 },
-  { idx: 0, fx: 0.58, fy: 0.38, w: 300, rot: -4 },
+  { idx: 2, fx: 0.32, fy: 0.36, rot: 5 },
+  { idx: 4, fx: 0.80, fy: 0.48, rot: 9 },
+  { idx: 1, fx: 0.20, fy: 0.68, rot: 7 },
+  { idx: 3, fx: 0.42, fy: 0.68, rot: -7 },
+  { idx: 5, fx: 0.62, fy: 0.72, rot: -8 },
+  { idx: 0, fx: 0.58, fy: 0.38, rot: -4 },
 ];
 
 const seaCards = $('seaCards');
@@ -1551,8 +1555,11 @@ let seaZTop = 10;
 
 function renderSeaCards() {
   seaCards.innerHTML = '';
+  // scale with viewport height (min 220px, max 300px) so cards never spill
+  // off a short window, matching the leaflet's own clamp-based scaling.
+  const w = Math.round(Math.max(220, Math.min(300, window.innerHeight * (300 / 900))));
+  const h = Math.round(w * 1.25);
   seaLayout.forEach(item => {
-    const w = item.w, h = Math.round(w * 1.25);
     const div = document.createElement('div');
     div.className = 'sea-card';
     div.style.width = w + 'px';
