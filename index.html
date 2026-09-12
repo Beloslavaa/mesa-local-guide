@@ -802,6 +802,90 @@
     text-align: center;
     line-height: 1.4;
   }
+
+  /* ── DESKTOP LANDSCAPE: SEA OF LEAFLETS ─────────────────── */
+  .desktop-sea { display: none; }
+
+  @media (min-width: 900px) and (orientation: landscape) {
+    :root {
+      --leaf-w: 580px;
+      --leaf-h: 725px;
+      --q-w: 290px;
+      --q-h: 362.5px;
+    }
+
+    .desktop-sea { display: block; }
+
+    /* the sea is the permanent backdrop; .app becomes a transparent
+       full-viewport layer that only the active overlay (open leaflet,
+       archive, map, best-now) paints on top of it. */
+    .app {
+      display: block;
+      position: fixed; inset: 0;
+      width: auto; height: auto;
+      background: transparent;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .masthead, .stash, .stash-hint, .bottom-bar { display: none; }
+
+    .archive-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .desktop-sea {
+    position: fixed; inset: 0;
+    background: var(--paper);
+    z-index: 50;
+    overflow: hidden;
+  }
+  .sea-header {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    z-index: 3;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 46px 84px 0 56px;
+    pointer-events: none;
+  }
+  .sea-header > * { pointer-events: auto; }
+  .sea-masthead .logo { font-size: 130px; }
+  .sea-masthead .logo-sub { font-size: 42px; }
+  .sea-hint {
+    align-self: center;
+    font-family: 'Just Me Again Down Here', cursive;
+    font-size: 26px;
+    color: var(--ink);
+    opacity: 0.55;
+    transform: rotate(-1deg);
+    white-space: nowrap;
+  }
+  .sea-actions {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex-shrink: 0;
+  }
+
+  .sea-cards { position: absolute; inset: 0; z-index: 2; }
+  .sea-card {
+    position: absolute;
+    overflow: hidden;
+    background: var(--paper);
+    box-shadow: 5px 5px 0 var(--ink), 9px 9px 0 rgba(0,0,0,0.16);
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+  }
+  .sea-card.dragging { cursor: grabbing; }
+  .sea-card img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    pointer-events: none;
+    -webkit-user-drag: none;
+  }
 </style>
 </head>
 <body>
@@ -873,6 +957,24 @@
   </div>
 </div>
 
+<div class="desktop-sea" id="desktopSea">
+  <div class="paper-texture"></div>
+  <div class="sea-header">
+    <div class="sea-masthead">
+      <div class="logo-area">
+        <span class="logo">MESA</span>
+        <span class="logo-sub">guía local</span>
+      </div>
+    </div>
+    <div class="sea-hint">drag to reorder · tap to open</div>
+    <div class="sea-actions">
+      <button class="archive-btn" id="seaArchiveBtn"><svg class="archive-btn-circle" viewBox="0 0 140 56" fill="none" preserveAspectRatio="none"><path d="M14 28 Q12 8 70 7 Q128 8 126 28 Q128 48 70 49 Q12 48 14 28 Z" stroke="#1a1714" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.85"/></svg>archive</button>
+      <button class="bestnow-btn" id="seaBestNowBtn"><svg class="bestnow-btn-burst" viewBox="0 0 200 100" fill="none" preserveAspectRatio="none"><path d="M 18 50 L 4 38 L 22 32 L 12 18 L 32 20 L 30 4 L 48 14 L 56 0 L 68 16 L 82 4 L 88 22 L 104 6 L 108 24 L 124 8 L 122 26 L 142 14 L 134 30 L 156 22 L 144 34 L 178 30 L 162 40 L 196 50 L 178 56 L 188 72 L 168 70 L 172 88 L 154 80 L 148 96 L 134 82 L 122 96 L 116 78 L 100 96 L 96 78 L 80 94 L 78 76 L 62 94 L 64 74 L 46 88 L 54 72 L 32 84 L 44 68 L 18 76 L 32 62 Z" stroke="#b8321a" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" fill="none" opacity="0.9"/></svg>best now</button>
+    </div>
+  </div>
+  <div class="sea-cards" id="seaCards"></div>
+</div>
+
 <script>
 const $ = id => document.getElementById(id);
 
@@ -930,6 +1032,8 @@ const leafletsData = [
 let pileOrder = [0, 1, 2, 3, 4, 5];
 let currentIdx = null;
 let isAnimating = false;
+let seaOriginRect = null;
+let seaOriginCard = null;
 
 const stash    = $('stash');
 const stashHint = $('stashHint');
@@ -996,7 +1100,7 @@ stash.addEventListener('click', () => {
   openTopLeaflet();
 });
 
-function openTopLeaflet() {
+function openTopLeaflet(originRect) {
   isAnimating = true;
   const topIdx = pileOrder[0];
   currentIdx = topIdx;
@@ -1009,7 +1113,7 @@ function openTopLeaflet() {
 
   const appEl = document.querySelector('.app');
   const appRect = appEl.getBoundingClientRect();
-  const pileRect = topItem.getBoundingClientRect();
+  const pileRect = originRect || topItem.getBoundingClientRect();
   const style = getComputedStyle(document.documentElement);
   const qw = parseFloat(style.getPropertyValue('--q-w'));
   const qh = parseFloat(style.getPropertyValue('--q-h'));
@@ -1146,12 +1250,54 @@ viewer.addEventListener('click', e => {
   if (!viewer.classList.contains('opened')) return;
   if (isAnimating) return;
   if (e.target.closest('#leaf')) return;
+  if (seaOriginRect) {
+    dismissLeafletToSea();
+    return;
+  }
   const angle = (Math.random() * 60 - 30) - 90 + (Math.random() < 0.5 ? 180 : 0);
   const rad = angle * Math.PI / 180;
   const dx = Math.cos(rad) * 600;
   const dy = Math.sin(rad) * 600;
   dismissLeaflet(dx, dy);
 });
+
+function dismissLeafletToSea() {
+  isAnimating = true;
+  const rect = seaOriginRect;
+  const originCard = seaOriginCard;
+
+  const appEl = document.querySelector('.app');
+  const appRect = appEl.getBoundingClientRect();
+  const style = getComputedStyle(document.documentElement);
+  const qw = parseFloat(style.getPropertyValue('--q-w'));
+  const qh = parseFloat(style.getPropertyValue('--q-h'));
+
+  const appCenterX = appRect.left + appRect.width / 2;
+  const appCenterY = appRect.top + appRect.height / 2;
+  const cardCenterX = rect.left + rect.width / 2;
+  const cardCenterY = rect.top + rect.height / 2;
+
+  const scaleRatio = rect.width / qw;
+  const dx = cardCenterX - appCenterX + (qw / 2) * scaleRatio;
+  const dy = cardCenterY - appCenterY + (qh / 2) * scaleRatio;
+
+  leaf.classList.remove('is-open');
+  leafWrap.style.transition = 'transform 0.5s cubic-bezier(0.5, 0, 0.75, 0), opacity 0.45s ease';
+  leafWrap.style.transform = `translate(${dx}px, ${dy}px) scale(${scaleRatio}) rotate(3.5deg)`;
+  leafWrap.style.opacity = '0';
+
+  setTimeout(() => {
+    currentIdx = null;
+    viewer.classList.remove('visible', 'opened');
+    leafWrap.style.transition = '';
+    leafWrap.style.transform = '';
+    leafWrap.style.opacity = '';
+    if (originCard) originCard.style.opacity = '';
+    seaOriginRect = null;
+    seaOriginCard = null;
+    isAnimating = false;
+  }, 520);
+}
 
 function dismissLeaflet(dx, dy) {
   isAnimating = true;
@@ -1382,6 +1528,121 @@ let firstTap = true;
 stash.addEventListener('click', () => {
   if (firstTap) { firstTap = false; }
 });
+
+/* ── DESKTOP LANDSCAPE: SEA OF LEAFLETS ─────────────────── */
+const seaLayout = [
+  { idx: 2, fx: 0.32, fy: 0.36, w: 300, rot: 5 },
+  { idx: 4, fx: 0.80, fy: 0.48, w: 300, rot: 9 },
+  { idx: 1, fx: 0.20, fy: 0.68, w: 300, rot: 7 },
+  { idx: 3, fx: 0.42, fy: 0.68, w: 300, rot: -7 },
+  { idx: 5, fx: 0.62, fy: 0.72, w: 300, rot: -8 },
+  { idx: 0, fx: 0.58, fy: 0.38, w: 300, rot: -4 },
+];
+
+const seaCards = $('seaCards');
+let seaZTop = 10;
+
+function renderSeaCards() {
+  seaCards.innerHTML = '';
+  seaLayout.forEach(item => {
+    const w = item.w, h = Math.round(w * 1.25);
+    const div = document.createElement('div');
+    div.className = 'sea-card';
+    div.style.width = w + 'px';
+    div.style.height = h + 'px';
+    div.style.transform = `rotate(${item.rot}deg)`;
+    div.style.zIndex = seaZTop++;
+    div.style.left = Math.round(item.fx * window.innerWidth - w / 2) + 'px';
+    div.style.top  = Math.round(item.fy * window.innerHeight - h / 2) + 'px';
+    div.dataset.baseRot = item.rot;
+    div.innerHTML = `<img src="${leafletsData[item.idx].img.replace(/\.png$/, '_q1.png')}" alt="">`;
+    seaCards.appendChild(div);
+    makeSeaCardDraggable(div, item.idx);
+  });
+}
+
+function jostleNeighbors(el) {
+  const others = Array.from(seaCards.children).filter(c => c !== el);
+  others.sort(() => Math.random() - 0.5).slice(0, 2).forEach(c => {
+    const base = parseFloat(c.dataset.baseRot) || 0;
+    const jx = (Math.random() * 12 - 6).toFixed(1);
+    const jy = (Math.random() * 12 - 6).toFixed(1);
+    const jr = (Math.random() * 6 - 3).toFixed(1);
+    c.style.transition = 'transform 0.35s ease';
+    c.style.transform = `rotate(${base + Number(jr)}deg) translate(${jx}px, ${jy}px)`;
+    setTimeout(() => {
+      c.style.transform = `rotate(${base}deg)`;
+    }, 350);
+  });
+}
+
+function makeSeaCardDraggable(el, idx) {
+  let startX = 0, startY = 0, origLeft = 0, origTop = 0;
+  let dragging = false, moved = false;
+
+  el.addEventListener('pointerdown', e => {
+    if (e.button !== 0 && e.pointerType === 'mouse') return;
+    dragging = true;
+    moved = false;
+    startX = e.clientX;
+    startY = e.clientY;
+    origLeft = parseFloat(el.style.left);
+    origTop = parseFloat(el.style.top);
+    el.setPointerCapture(e.pointerId);
+    el.style.zIndex = ++seaZTop;
+  });
+
+  el.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    if (!moved && Math.hypot(dx, dy) > 5) {
+      moved = true;
+      el.classList.add('dragging');
+      el.style.transition = 'none';
+      jostleNeighbors(el);
+    }
+    if (moved) {
+      el.style.left = (origLeft + dx) + 'px';
+      el.style.top = (origTop + dy) + 'px';
+    }
+  });
+
+  function endDrag(e) {
+    if (!dragging) return;
+    dragging = false;
+    el.classList.remove('dragging');
+    el.style.transition = '';
+    if (!moved) {
+      const rect = el.getBoundingClientRect();
+      el.style.opacity = '0';
+      openInStandardApp(idx, rect, el);
+    }
+  }
+  el.addEventListener('pointerup', endDrag);
+  el.addEventListener('pointercancel', endDrag);
+}
+
+function openInStandardApp(idx, originRect, originCard) {
+  if (isAnimating) return;
+  seaOriginRect = originRect || null;
+  seaOriginCard = originCard || null;
+  pileOrder = [idx, ...pileOrder.filter(i => i !== idx)];
+  renderStash();
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => openTopLeaflet(originRect));
+  });
+}
+
+$('seaArchiveBtn').addEventListener('click', () => {
+  $('archive').classList.add('visible');
+});
+$('seaBestNowBtn').addEventListener('click', () => {
+  showBestNow();
+});
+
+renderSeaCards();
+window.addEventListener('resize', renderSeaCards);
 </script>
 </body>
 </html>
